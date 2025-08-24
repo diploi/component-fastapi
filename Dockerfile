@@ -1,23 +1,36 @@
-
-FROM python:3.13-slim
+# ---- Builder Stage ----
+FROM python:3.13-slim AS builder
 
 ARG FOLDER=/fastapi
 
-RUN apt-get update && apt-get upgrade -y && apt-get clean
-
-RUN useradd -u 1000 -m devuser
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR $FOLDER
 
-COPY ./requirements.txt $FOLDER/requirements.txt
+COPY requirements.txt .
 
-RUN pip install --no-cache-dir --upgrade -r $FOLDER/requirements.txt
+RUN pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
 
 COPY . .
 
-RUN chown -R devuser:devuser $FOLDER
+# ---- Production Stage ----
+FROM builder AS production
 
-USER devuser
+ARG FOLDER=/fastapi
+
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+WORKDIR $FOLDER
+
+COPY --from=builder /wheels /wheels
+
+RUN pip install --no-cache /wheels/*
+
+RUN chown -R appuser:appuser $FOLDER
+
+USER appuser
 
 EXPOSE 8000
 
