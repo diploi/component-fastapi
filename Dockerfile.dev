@@ -1,7 +1,6 @@
-
 FROM python:3.13-slim
 
-ARG FOLDER=/fastapi
+ARG FOLDER=/app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \

@@ -1,7 +1,7 @@
 # ---- Builder Stage ----
 FROM python:3.13-slim AS builder
 
-ARG FOLDER=/fastapi
+ARG FOLDER=/app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
@@ -18,7 +18,7 @@ COPY . .
 # ---- Production Stage ----
 FROM builder AS production
 
-ARG FOLDER=/fastapi
+ARG FOLDER=/app
 
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
