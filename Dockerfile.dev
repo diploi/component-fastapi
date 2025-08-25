@@ -2,22 +2,20 @@ FROM python:3.13-slim
 
 ARG FOLDER=/app
 
+WORKDIR $FOLDER
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Create non-root user
-RUN groupadd -r devuser && useradd -r -g devuser devuser
+RUN groupadd -g 1000 devgroup && \
+    useradd -u 1000 -g 1000 -m devuser
 
-WORKDIR $FOLDER
-
-COPY ./requirements.txt $FOLDER/requirements.txt
+COPY --chown=devuser:devgroup ./requirements.txt $FOLDER/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r $FOLDER/requirements.txt
 
-COPY . .
-
-RUN chown -R devuser:devuser $FOLDER
+COPY --chown=devuser:devgroup . .
 
 USER devuser
 

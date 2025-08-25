@@ -20,17 +20,18 @@ FROM builder AS production
 
 ARG FOLDER=/app
 
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+RUN groupadd -g 1000 devgroup && \
+    useradd -u 1000 -g 1000 -m devuser
 
 WORKDIR $FOLDER
 
-COPY --from=builder /wheels /wheels
+COPY --chown=devuser:devgroup --from=builder /wheels /wheels
 
 RUN pip install --no-cache /wheels/*
 
-RUN chown -R appuser:appuser $FOLDER
+RUN chown -R devuser:devgroup $FOLDER
 
-USER appuser
+USER devuser
 
 EXPOSE 8000
 
