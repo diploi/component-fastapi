@@ -1,19 +1,19 @@
-FROM python:3.13-slim
+FROM python:3.13-alpine AS base
 
 ARG FOLDER=/app
 
-WORKDIR $FOLDER
+WORKDIR ${FOLDER}
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache shadow
 
 RUN groupadd -g 1000 devgroup && \
     useradd -u 1000 -g 1000 -m devuser
 
-COPY --chown=devuser:devgroup . $FOLDER
+COPY . /app
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN chown -R devuser:devgroup /app
+
+RUN pip install -r requirements.txt --no-cache-dir
 
 USER devuser
 
