@@ -11,11 +11,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN groupadd -g 1000 devgroup && \
     useradd -u 1000 -g 1000 -m devuser
 
-COPY --chown=devuser:devgroup ./requirements.txt $FOLDER/requirements.txt
+COPY --chown=devuser:devgroup . $FOLDER
 
-RUN pip install --no-cache-dir --upgrade -r $FOLDER/requirements.txt
-
-COPY --chown=devuser:devgroup . .
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 USER devuser
 

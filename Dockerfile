@@ -9,11 +9,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR $FOLDER
 
-COPY requirements.txt .
+COPY . $FOLDER
 
 RUN pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
-
-COPY . .
 
 # ---- Production Stage ----
 FROM builder AS production
