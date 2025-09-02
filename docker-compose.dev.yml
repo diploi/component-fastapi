@@ -1,0 +1,11 @@
+services:
+  python_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: python_dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    restart: "no"
