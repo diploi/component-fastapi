@@ -28,4 +28,4 @@ EXPOSE 8000
 ENV PORT=8000
 ENV HOST="0.0.0.0"
 
-CMD ["uv", "run", "--frozen", "src/main.py"]
+CMD ["fastapi", "run", "src/main.py", "--proxy-headers", "--port", "8000"]
