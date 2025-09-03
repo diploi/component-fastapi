@@ -21,14 +21,30 @@ For more details, check https://diploi.com/blog/hosting_fastapi_apps
 
 ### Development
 
-Will activate a virtual environment in `.venv` and run `uv sync` when component is first initialized, and `python src/main.py` when deployment is started.
+During development, the container installs Node.js and `nodemon` to enable automatic reloads when files change. The development server is started with:
+
+```sh
+nodemon --delay 1 --watch pyproject.toml --exec uv run --isolated fastapi dev --host 0.0.0.0 --port 8000 src/main.py
+```
+
+This will:
+- Activate the virtual environment in `.venv`
+- Install dependencies using `uv sync`
+- Automatically restart the FastAPI server when relevant files change
 
 ### Production
 
-Will build a production ready image. Image runs `uv sync` when being created. Once the image runs, `python src/main.py` is called.
+Builds a production-ready image. During the build, dependencies are installed with `uv sync`. When the container starts, it runs:
+
+```sh
+fastapi run src/main.py --proxy-headers --port 8000
+```
+
+This uses the FastAPI CLI to serve your application on port 8000.
 
 ## Links
 
 - [FastAPI documentation](https://fastapi.tiangolo.com/)
 - [Python documentation](https://docs.python.org/)
 - [uv documentation](https://docs.astral.sh/uv/)
+
