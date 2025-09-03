@@ -38,11 +38,7 @@ spec:
         - name: install-dependencies
           image: {{ .Values.images.app }}
           imagePullPolicy: Always
-          command: ["/bin/sh", "-c"]
-          args:
-          - |
-            uv sync --frozen --no-cache --link-mode=copy && \
-            cp --remove-destination "$(readlink /app/{{ .Values.identifier }}/.venv/bin/python)" /app/{{ .Values.identifier }}/.venv/bin/python 2>/dev/null || :
+          command: ["uv", "sync", "--locked"]
           workingDir: /app/{{ .Values.identifier }}
           volumeMounts:
             - name: app-mount
@@ -54,11 +50,6 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
-          {{- if eq .Values.stage "development" }}
-          command: ["/usr/local/bin/nodemon"]
-          args: ["--delay", "1", "--exec", "uv", "run", "--isolated", "src/main.py"]
-          workingDir: /app/{{ .Values.identifier }}
-          {{- end }}
           env:
             {{- range .Values.env }}
             - name: {{ .identifier }}
