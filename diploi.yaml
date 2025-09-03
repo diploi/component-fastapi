@@ -10,4 +10,4 @@ hosts:
 
 images:
   - identifier: app
-    prebuildImage: ghcr.io/diploi/component-python:[tag]
+    prebuildImage: ghcr.io/diploi/component-fastapi:[tag]
