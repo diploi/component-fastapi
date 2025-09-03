@@ -42,13 +42,15 @@ spec:
           args:
           - |
             uv sync --locked && \
-            mkdir -p /tmp/supervisor/conf.d && \
-            cp /app/{{ .Values.identifier }}/supervisord.conf /tmp/supervisord.conf 2>/dev/null || : && \
-            cp /app/{{ .Values.identifier }}/fastapi-supervisor.conf /tmp/supervisor/conf.d/fastapi-supervisor.conf 2>/dev/null || :
+            mkdir -p /app/config/supervisor/conf.d && \
+            cp /app/{{ .Values.identifier }}/supervisord.conf /app/config/supervisord.conf 2>/dev/null || : && \
+            cp /app/{{ .Values.identifier }}/fastapi-supervisor.conf /app/config/supervisor/conf.d/fastapi-supervisor.conf 2>/dev/null || :
           workingDir: /app/{{ .Values.identifier }}
           volumeMounts:
             - name: app-mount
               mountPath: /app
+            - name: supervisor-config
+              mountPath: /app/config
       {{- end }}
       containers:
         - name: app
@@ -68,9 +70,13 @@ spec:
             - name: app-mount
               mountPath: /app
             {{- end }}
+            - name: supervisor-config
+              mountPath: /app/config
       volumes:
         {{- if hasKey .Values.storage "code" }}
         - name: app-mount
           hostPath:
             path: {{ .Values.storage.code.hostPath }}
         {{- end }}
+        - name: supervisor-config
+          emptyDir: {}
