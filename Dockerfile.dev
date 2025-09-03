@@ -25,10 +25,6 @@ RUN apk update \
 # Allow uv to use cache
 RUN mkdir -p /.cache/uv && chown 1000:1000 /.cache /.cache/uv
 
-# Copy supervisord configuration
-COPY --chown=1000:1000 ./supervisord.conf /etc/supervisord.conf
-COPY --chown=1000:1000 ./fastapi-supervisor.conf /etc/supervisor/conf.d/fastapi-supervisor.conf
-
 USER 1000:1000
 
 # Reset the entrypoint, don't invoke `uv`

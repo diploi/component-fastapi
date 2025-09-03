@@ -38,7 +38,12 @@ spec:
         - name: install-dependencies
           image: {{ .Values.images.app }}
           imagePullPolicy: Always
-          command: ["uv", "sync", "--locked"]
+          command: ["/bin/sh", "-c"]
+          args:
+          - |
+            uv sync --locked && \
+            cp --chown=1000:1000 /app/{{ .Values.identifier }}/supervisord.conf /etc/supervisord.conf 2>/dev/null || : && \
+            cp --chown=1000:1000 /app/{{ .Values.identifier }}/fastapi-supervisor.conf /etc/supervisor/conf.d/fastapi-supervisor.conf 2>/dev/null || :
           workingDir: /app/{{ .Values.identifier }}
           volumeMounts:
             - name: app-mount
