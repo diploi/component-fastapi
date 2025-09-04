@@ -24,13 +24,14 @@ For more details, check https://diploi.com/blog/hosting_fastapi_apps
 During development, the container installs Node.js and `nodemon` to enable automatic reloads when files change. The development server is started with:
 
 ```sh
-nodemon --delay 1 --watch pyproject.toml --exec uv run --isolated fastapi dev --host 0.0.0.0 --port 8000 src/main.py
+nodemon --delay 1 --watch pyproject.toml --exec uv run --isolated uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 This will:
-- Activate the virtual environment in `.venv`
-- Install dependencies using `uv sync`
-- Automatically restart the FastAPI server when relevant files change
+- Use nodemon to watch for changes to pyproject.toml and restart the server when changes are detected.
+- Run the command uv run --isolated uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload in an isolated Python environment.
+- Start the FastAPI app using uvicorn on all network interfaces at port 8000.
+- Enable hot-reload via uvicorn --reload, so the server automatically restarts when Python source files change.
 
 ### Production
 
