@@ -45,10 +45,22 @@ spec:
             mkdir -p /tmp/app-backup
             cp /app/pyproject.toml /tmp/app-backup/pyproject.toml 2>/dev/null || echo "pyproject.toml not found in image, will be restored from volume"
             # Restore pyproject.toml from volume mount if it exists there
+            echo "Checking for pyproject.toml in volume mount..."
+            echo "Looking for: /app/{{ .Values.identifier }}/pyproject.toml"
+            ls -la /app/ || echo "Cannot list /app directory"
+            ls -la /app/{{ .Values.identifier }}/ || echo "Cannot list /app/{{ .Values.identifier }}/ directory"
+            
             if [ -f /app/{{ .Values.identifier }}/pyproject.toml ]; then
+              echo "Found pyproject.toml in /app/{{ .Values.identifier }}/pyproject.toml"
               cp /app/{{ .Values.identifier }}/pyproject.toml /tmp/app-backup/pyproject.toml
+            elif [ -f /app/pyproject.toml ]; then
+              echo "Found pyproject.toml in /app/pyproject.toml (root level)"
+              cp /app/pyproject.toml /tmp/app-backup/pyproject.toml
+            else
+              echo "pyproject.toml not found in volume mount at either location"
             fi
             # Install dependencies
+            echo "Installing dependencies"
             uv sync --frozen --no-cache --link-mode=copy && \
             cp --remove-destination "$(readlink /app/{{ .Values.identifier }}/.venv/bin/python)" /app/{{ .Values.identifier }}/.venv/bin/python 2>/dev/null || :
           workingDir: /app/{{ .Values.identifier }}
