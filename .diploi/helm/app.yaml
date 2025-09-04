@@ -41,12 +41,22 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
           - |
+            # Copy pyproject.toml to a persistent location before volume mount overwrites it
+            mkdir -p /tmp/app-backup
+            cp /app/pyproject.toml /tmp/app-backup/pyproject.toml 2>/dev/null || echo "pyproject.toml not found in image, will be restored from volume"
+            # Restore pyproject.toml from volume mount if it exists there
+            if [ -f /app/{{ .Values.identifier }}/pyproject.toml ]; then
+              cp /app/{{ .Values.identifier }}/pyproject.toml /tmp/app-backup/pyproject.toml
+            fi
+            # Install dependencies
             uv sync --frozen --no-cache --link-mode=copy && \
             cp --remove-destination "$(readlink /app/{{ .Values.identifier }}/.venv/bin/python)" /app/{{ .Values.identifier }}/.venv/bin/python 2>/dev/null || :
           workingDir: /app/{{ .Values.identifier }}
           volumeMounts:
             - name: app-mount
               mountPath: /app
+            - name: app-backup
+              mountPath: /tmp/app-backup
       {{- end }}
       containers:
         - name: app
@@ -59,14 +69,30 @@ spec:
             - name: {{ .identifier }}
               value: {{ .value | quote }}
             {{- end }}
+          {{- if eq .Values.stage "development"}}
+          command: ["/bin/sh", "-c"]
+          args:
+          - |
+            # Restore pyproject.toml from backup if it doesn't exist in the mounted volume
+            if [ ! -f /app/pyproject.toml ] && [ -f /tmp/app-backup/pyproject.toml ]; then
+              echo "Restoring pyproject.toml from backup"
+              cp /tmp/app-backup/pyproject.toml /app/pyproject.toml
+            fi
+            # Start the application
+            exec /usr/local/bin/nodemon --delay 1 --watch pyproject.toml --exec "uv run --isolated uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload"
+          {{- end }}
           volumeMounts:
             {{- if hasKey .Values.storage "code" }}
             - name: app-mount
               mountPath: /app
             {{- end }}
+            - name: app-backup
+              mountPath: /tmp/app-backup
       volumes:
         {{- if hasKey .Values.storage "code" }}
         - name: app-mount
           hostPath:
             path: {{ .Values.storage.code.hostPath }}
         {{- end }}
+        - name: app-backup
+          emptyDir: {}
