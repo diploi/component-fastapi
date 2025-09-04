@@ -1,10 +1,10 @@
 diploiVersion: v1.0
 type: component
-name: Python
-description: Official Python component for Diploi
+name: FastAPI
+description: Official FastAPI component for Diploi
 
 hosts:
-  - name: Python
+  - name: FastAPI
     identifier: app
     urlFormat: '[label].[default-domain]'
 

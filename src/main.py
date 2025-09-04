@@ -3,4 +3,4 @@ app = FastAPI()
 
 @app.get("/")
 def read_root(): 
-    return {"Hello": "Diploi"}
+    return "🎊 Welcome to " + "<a href='https://diploi.com'>diploi.com</a>"
