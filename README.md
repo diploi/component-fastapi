@@ -24,7 +24,7 @@ For more details, check https://diploi.com/blog/hosting_fastapi_apps
 During development, the container installs Node.js and `nodemon` to enable automatic reloads when files change. The development server is started with:
 
 ```sh
-nodemon --delay 1 --watch pyproject.toml --exec uv run --isolated uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+nodemon --delay 1 --watch pyproject.toml --watch ".venv/lib/*" --watch ".venv/lib64/*" --exec "uv run --isolated uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\""
 ```
 
 This will:
