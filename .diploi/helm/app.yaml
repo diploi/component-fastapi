@@ -42,8 +42,8 @@ spec:
           args:
           - |
             uv sync --frozen --no-cache --link-mode=copy && \
-            cp --remove-destination "$(readlink /app/{{ .Values.identifier }}/.venv/bin/python)" /app/{{ .Values.identifier }}/.venv/bin/python 2>/dev/null || :
-          workingDir: /app/{{ .Values.identifier }}
+            cp --remove-destination "$(readlink /app{{ .Values.folder }}/.venv/bin/python)" /app{{ .Values.folder }}/.venv/bin/python 2>/dev/null || :
+          workingDir: /app{{ .Values.folder }}
           volumeMounts:
             - name: app-mount
               mountPath: /app
@@ -60,7 +60,7 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
           {{- if eq .Values.stage "development"}}
-          workingDir: /app/{{ .Values.identifier }}
+          workingDir: /app{{ .Values.folder }}
           {{- end }}
           volumeMounts:
             {{- if hasKey .Values.storage "code" }}
