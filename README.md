@@ -6,6 +6,7 @@
 [![component on diploi badge](https://diploi.com/component.svg)](https://diploi.com/component/fastapi)
 [![latest tag badge](https://badgen.net/github/tag/diploi/component-fastapi-beta)](https://diploi.com/component/fastapi)
 
+Try it our for free, no card required https://diploi.com/component/fastapi
 
 ## Operation
 
@@ -17,6 +18,7 @@
 4. Choose **Create Repository** to generate a new GitHub repo
 5. Finally, click **Launch Stack**
 
+Link to the full guide http://diploi.com/blog/hosting_fastapi_apps
 
 ### Development
 
