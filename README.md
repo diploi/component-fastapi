@@ -6,8 +6,6 @@
 [![component on diploi badge](https://diploi.com/component.svg)](https://diploi.com/component/fastapi)
 [![latest tag badge](https://badgen.net/github/tag/diploi/component-fastapi-beta)](https://diploi.com/component/fastapi)
 
-Try it our for free, no card required https://diploi.com/component/fastapi
-
 ## Operation
 
 ### Getting started
