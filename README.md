@@ -16,7 +16,7 @@
 4. Choose **Create Repository** to generate a new GitHub repo
 5. Finally, click **Launch Stack**
 
-Link to the full guide http://diploi.com/blog/hosting_fastapi_apps
+Link to the full guide https://diploi.com/blog/hosting_fastapi_apps
 
 ### Development
 
