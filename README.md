@@ -44,6 +44,7 @@ This uses the FastAPI CLI to serve your application on port 8000.
 
 ## Links
 
+- [Adding FastAPI to a project](https://docs.diploi.com/building/components/fastapi)
 - [FastAPI documentation](https://fastapi.tiangolo.com/)
 - [Python documentation](https://docs.python.org/)
 - [uv documentation](https://docs.astral.sh/uv/)
