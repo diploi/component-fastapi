@@ -15,6 +15,10 @@ ENV UV_LINK_MODE=copy
 # Ensure installed tools can be executed out of the box
 ENV UV_TOOL_BIN_DIR=/usr/local/bin
 
+ENV VIRTUAL_ENV=${FOLDER}/.venv
+
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
 COPY . /app
 RUN uv sync --locked --no-dev
 
