@@ -15,10 +15,6 @@ ENV UV_LINK_MODE=copy
 # Ensure installed tools can be executed out of the box
 ENV UV_TOOL_BIN_DIR=/usr/local/bin
 
-ENV VIRTUAL_ENV=${FOLDER}/.venv
-
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
 COPY . /app
 RUN uv sync --locked --no-dev
 
@@ -32,4 +28,4 @@ EXPOSE 8000
 ENV PORT=8000
 ENV HOST="0.0.0.0"
 
-CMD ["fastapi", "run", "src/main.py", "--proxy-headers", "--port", "8000"]
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]
