@@ -37,7 +37,7 @@ This will:
 Builds a production-ready image. During the build, dependencies are installed with `uv sync`. When the container starts, it runs:
 
 ```sh
-fastapi run src/main.py --proxy-headers --port 8000
+uvicorn src.main:app --host 0.0.0.0 --port 8000 --proxy-headers
 ```
 
 This uses the FastAPI CLI to serve your application on port 8000.
