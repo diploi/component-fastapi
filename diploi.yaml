@@ -3,11 +3,13 @@ type: component
 name: FastAPI
 description: Official FastAPI component for Diploi
 
+supportsAdditionalHosts: { serviceName: 'app'}
+
 hosts:
   - name: FastAPI
     identifier: app
-    urlFormat: '[label].[default-domain]'
+    port: 8000
 
 images:
   - identifier: app
-    prebuildImage: ghcr.io/diploi/component-fastapi:[tag]
+    prebuildImage: public.ecr.aws/p8t2q7f4/diploi/component-fastapi:[tag]
