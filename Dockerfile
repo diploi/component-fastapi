@@ -18,6 +18,7 @@ ENV UV_TOOL_BIN_DIR=/usr/local/bin
 COPY . /app
 RUN sh -c 'if [ -f requirements.txt ]; then \
     echo "requirements.txt found, installing dependencies with uv pip" && \
+    uv venv .venv --clear && \
     uv pip install -r requirements.txt && \
     uv pip install uvicorn; \
     else \
