@@ -34,7 +34,8 @@ ENV HOST="0.0.0.0"
 CMD ["/usr/local/bin/nodemon", \
     "--delay", "1", \
     "--watch", "pyproject.toml", \
+    "--watch", "requirements.txt", \
     "--watch", ".venv/lib/*", \
     "--watch", ".venv/lib64/*", \
-    "--exec", "uv run --isolated uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\"", \
+    "--exec", "sh -c 'if [ -f pyproject.toml ]; then uv run --isolated --with . --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\"; elif [ -f requirements.txt ]; then uv run --isolated --with-requirements requirements.txt --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\"; else uv run --isolated --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\"; fi'", \
     "--"]
