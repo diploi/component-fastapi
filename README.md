@@ -23,14 +23,14 @@ Link to the full guide https://diploi.com/blog/hosting_fastapi_apps
 During development, the container installs Node.js and `nodemon` to enable automatic reloads when files change. The development server is started with:
 
 ```sh
-nodemon --delay 1 --watch pyproject.toml --watch ".venv/lib/*" --watch ".venv/lib64/*" --exec "uv run --isolated uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\""
+nodemon --delay 1 --watch pyproject.toml --watch requirements.txt --watch ".venv/lib/*" --watch ".venv/lib64/*" --exec "sh -c 'if [ -f pyproject.toml ]; then uv run --isolated --with . --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\"; elif [ -f requirements.txt ]; then uv run --isolated --with-requirements requirements.txt --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\"; else uv run --isolated --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\"; fi'"
 ```
 
 This will:
-- Use nodemon to watch for changes to pyproject.toml and restart the server when changes are detected.
-- Run the command uv run --isolated uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload in an isolated Python environment.
+- Use nodemon to watch for changes to `pyproject.toml`, `requirements.txt`, and the virtual environment, restarting the server when changes are detected.
+- Detect the dependency style and run in an isolated Python environment: with `pyproject.toml` using `uv run --with .`, with `requirements.txt` using `uv run --with-requirements`, or with no config file using uvicorn only.
 - Start the FastAPI app using uvicorn on all network interfaces at port 8000.
-- Enable hot-reload via uvicorn --reload, so the server automatically restarts when Python source files change.
+- Enable hot-reload via uvicorn `--reload`, so the server automatically restarts when Python source files change.
 
 ### Production
 
@@ -40,7 +40,7 @@ Builds a production-ready image. During the build, dependencies are installed wi
 uvicorn src.main:app --host 0.0.0.0 --port 8000 --proxy-headers
 ```
 
-This uses the FastAPI CLI to serve your application on port 8000.
+This uses uvicorn to serve your application on port 8000.
 
 ## Links
 
