@@ -1,5 +1,5 @@
 # Use a Python image with uv pre-installed
-FROM ghcr.io/astral-sh/uv:python3.13-alpine
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm
 
 # This will be set by the GitHub action to the folder containing this component.
 ARG FOLDER=/app
@@ -13,11 +13,15 @@ ENV UV_COMPILE_BYTECODE=1
 # Ensure installed tools can be executed out of the box
 ENV UV_TOOL_BIN_DIR=/usr/local/bin
 
-# Install Node.js and nodemon for easy watch mode with Python
+# Fix uv + non-root environment
+ENV HOME=/tmp
+ENV XDG_DATA_HOME=/tmp/.local/share
+ENV XDG_CACHE_HOME=/tmp/.cache
+
 USER root
-RUN apk update \
-    && apk add nodejs npm \
-    && npm install -g nodemon
+RUN apt-get update && apt-get install -y nodejs npm \
+    && npm install -g nodemon \
+    && rm -rf /var/lib/apt/lists/*
 
 # Allow uv to use cache
 RUN mkdir -p /.cache/uv && chown 1000:1000 /.cache /.cache/uv

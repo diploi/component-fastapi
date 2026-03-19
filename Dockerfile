@@ -1,5 +1,5 @@
 # Use a Python image with uv pre-installed
-FROM ghcr.io/astral-sh/uv:python3.13-alpine
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm
 
 # This will be set by the GitHub action to the folder containing this component.
 ARG FOLDER=/app
