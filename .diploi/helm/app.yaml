@@ -52,9 +52,6 @@ spec:
                 echo "No dependency definition found" >&2
                 exit 1
               fi && \
-              echo "Installing uvicorn with uv and linking it to the app's virtual environment" && \
-              uv pip show --python .venv/bin/python uvicorn >/dev/null 2>&1 || \
-              uv pip install --python .venv/bin/python uvicorn --link-mode=copy && \
               cp --remove-destination "$(readlink /app{{ .Values.folder }}/.venv/bin/python)" /app{{ .Values.folder }}/.venv/bin/python 2>/dev/null || :
           workingDir: /app{{ .Values.folder }}
           volumeMounts:
