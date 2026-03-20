@@ -43,6 +43,7 @@ spec:
             - |
               if [ -f pyproject.toml ]; then
                 echo "Pyproject.toml found, installing dependencies with uv" && \
+                uv venv .venv --clear && \
                 uv sync --frozen --no-cache --link-mode=copy
               elif [ -f requirements.txt ]; then
                 echo "requirements.txt found, installing dependencies with pip" && \
