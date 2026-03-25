@@ -41,7 +41,8 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              uv venv .venv --clear
+              uv python install 3.11
+              uv venv .venv --python 3.11
               if [ -f pyproject.toml ]; then
                 uv pip install -e .
               elif [ -f requirements.txt ]; then
