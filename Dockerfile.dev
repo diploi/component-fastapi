@@ -4,6 +4,7 @@ FROM ghcr.io/astral-sh/uv:bookworm-slim
 ARG FOLDER=/app
 
 RUN mkdir /app && chown 1000:1000 /app
+
 RUN mkdir -p /.cache/uv && chown -R 1000:1000 /.cache
 RUN mkdir -p /.local/share/uv/python && chown -R 1000:1000 /.local/share/uv
 RUN mkdir -p /.local/bin && chown -R 1000:1000 /.local/bin
@@ -12,10 +13,7 @@ WORKDIR /app
 
 ENV UV_PYTHON_INSTALL_DIR=$FOLDER/.python
 ENV PATH="$FOLDER/.venv/bin:$PATH"
-ENV PORT=8000
-ENV HOST="0.0.0.0"
 
 USER 1000:1000
-EXPOSE 8000
 
 CMD ["uv", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "src", "--reload-dir", ".venv/lib"]
