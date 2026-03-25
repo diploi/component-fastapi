@@ -5,6 +5,8 @@ ARG FOLDER=/app
 
 RUN mkdir /app && chown 1000:1000 /app
 RUN mkdir -p /.cache/uv && chown -R 1000:1000 /.cache
+RUN mkdir -p /.local/share/uv/python && chown -R 1000:1000 /.local/share/uv
+
 WORKDIR /app
 
 ENV PATH="$FOLDER/.venv/bin:$PATH"
