@@ -1,45 +1,16 @@
-# Use a Python image with uv pre-installed
 FROM ghcr.io/astral-sh/uv:python3.11-bookworm
 
 # This will be set by the GitHub action to the folder containing this component.
 ARG FOLDER=/app
 
-COPY --chown=1000:1000 . /app
-WORKDIR ${FOLDER}
+RUN mkdir /app && chown 1000:1000 /app
+WORKDIR /app
 
-# Enable bytecode compilation
-ENV UV_COMPILE_BYTECODE=1
-
-# Ensure installed tools can be executed out of the box
-ENV UV_TOOL_BIN_DIR=/usr/local/bin
-
-# Fix uv + non-root environment
-ENV HOME=/tmp
-ENV XDG_DATA_HOME=/tmp/.local/share
-ENV XDG_CACHE_HOME=/tmp/.cache
-
-USER root
-RUN apt-get update && apt-get install -y nodejs npm \
-    && npm install -g nodemon \
-    && rm -rf /var/lib/apt/lists/*
-
-# Allow uv to use cache
-RUN mkdir -p /.cache/uv && chown 1000:1000 /.cache /.cache/uv
-
-USER 1000:1000
-
-# Reset the entrypoint, don't invoke `uv`
-ENTRYPOINT []
-
-EXPOSE 8000
+ENV PATH="$FOLDER/.venv/bin:$PATH"
 ENV PORT=8000
 ENV HOST="0.0.0.0"
 
-CMD ["/usr/local/bin/nodemon", \
-    "--delay", "1", \
-    "--watch", "pyproject.toml", \
-    "--watch", "requirements.txt", \
-    "--watch", ".venv/lib/*", \
-    "--watch", ".venv/lib64/*", \
-    "--exec", "sh -c 'if [ -f pyproject.toml ]; then uv run --isolated --with . --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\"; elif [ -f requirements.txt ]; then uv run --isolated --with-requirements requirements.txt --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\"; else uv run --isolated --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-exclude \".venv/**\"; fi'", \
-    "--"]
+USER 1000:1000
+EXPOSE 8000
+
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "src"]

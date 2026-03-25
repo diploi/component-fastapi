@@ -42,6 +42,11 @@ spec:
           args:
             - |
               uv venv .venv --clear
+              if [ -f pyproject.toml ]; then
+                uv pip install -e .
+              elif [ -f requirements.txt ]; then
+                uv pip install -r requirements.txt
+              fi
           workingDir: /app{{ .Values.folder }}
           volumeMounts:
             - name: app-mount
