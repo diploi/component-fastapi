@@ -42,7 +42,7 @@ spec:
           args:
             - |
               set -e
-              uv python install {{ (.Values.envMap.PYTHON_VERSION).value | default "3.12" }}
+              uv python install {{ ((.Values.envMap.PYTHON_VERSION).value | default "3.12") | quote }}
               uv venv .venv
               if [ -f pyproject.toml ]; then
                 uv pip install -e .
@@ -51,7 +51,7 @@ spec:
               fi
           env:
             - name: UV_PYTHON
-              value: {{ (.Values.envMap.PYTHON_VERSION).value | default "3.12" }}
+              value: {{ ((.Values.envMap.PYTHON_VERSION).value | default "3.12") | quote }}
             - name: UV_PYTHON_INSTALL_DIR
               value: /app{{ .Values.folder }}/.python
           workingDir: /app{{ .Values.folder }}
@@ -84,7 +84,7 @@ spec:
           {{- end }}
           env:
             - name: UV_PYTHON
-              value: {{ (.Values.envMap.PYTHON_VERSION).value | default "3.12" }}
+              value: {{ ((.Values.envMap.PYTHON_VERSION).value | default "3.12") | quote }}
             - name: UV_PYTHON_INSTALL_DIR
               value: /app{{ .Values.folder }}/.python
             {{- range .Values.env }}
