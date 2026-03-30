@@ -7,6 +7,7 @@ ARG FOLDER=/app
 ARG PYTHON_VERSION=3.12
 
 RUN mkdir -p /.cache/uv && chown -R 1000:1000 /.cache
+RUN mkdir -p /.local/share/uv/python && chown -R 1000:1000 /.local/share/uv
 
 COPY --chown=1000:1000 . /app
 WORKDIR ${FOLDER}
@@ -16,6 +17,8 @@ ENV UV_LINK_MODE=copy
 ENV PATH="$FOLDER/.venv/bin:$PATH"
 ENV UV_PYTHON=${PYTHON_VERSION}
 
+USER 1000:1000
+
 RUN uv python install ${PYTHON_VERSION} && \
     uv venv .venv && \
     if [ -f pyproject.toml ]; then \
@@ -23,7 +26,5 @@ RUN uv python install ${PYTHON_VERSION} && \
     elif [ -f requirements.txt ]; then \
       uv pip install -r requirements.txt; \
     fi
-
-USER 1000:1000
 
 CMD ["uv", "run", "--with", "uvicorn", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]
