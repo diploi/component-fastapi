@@ -4,7 +4,7 @@ FROM ghcr.io/astral-sh/uv:bookworm-slim
 ARG FOLDER=/app
 
 # This will be set by the GitHub action if "PYTHON_VERSION" ENV is set in diploi.yaml
-ARG PYTHON_VERSION=3.14
+ARG PYTHON_VERSION=3.12
 
 COPY --chown=1000:1000 . /app
 WORKDIR ${FOLDER}
