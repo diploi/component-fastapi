@@ -6,6 +6,8 @@ ARG FOLDER=/app
 # This will be set by the GitHub action if "PYTHON_VERSION" ENV is set in diploi.yaml
 ARG PYTHON_VERSION=3.12
 
+RUN mkdir -p /.cache/uv && chown -R 1000:1000 /.cache
+
 COPY --chown=1000:1000 . /app
 WORKDIR ${FOLDER}
 
