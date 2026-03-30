@@ -11,6 +11,7 @@ RUN mkdir -p /.local/bin && chown -R 1000:1000 /.local/bin
 
 WORKDIR /app
 
+ENV UV_LINK_MODE=copy
 ENV UV_PYTHON_INSTALL_DIR=$FOLDER/.python
 ENV PATH="$FOLDER/.venv/bin:$PATH"
 
