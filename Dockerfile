@@ -17,7 +17,7 @@ ENV UV_PYTHON=${PYTHON_VERSION}
 RUN uv python install ${PYTHON_VERSION} && \
     uv venv .venv && \
     if [ -f pyproject.toml ]; then \
-      uv sync --locked --no-dev; \
+      uv sync --locked --no-dev || uv sync --no-dev; \
     elif [ -f requirements.txt ]; then \
       uv pip install -r requirements.txt; \
     fi
