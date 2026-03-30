@@ -41,6 +41,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
+              set -e
               uv python install {{ (.Values.envMap.PYTHON_VERSION).value | default "3.12" }}
               uv venv .venv
               if [ -f pyproject.toml ]; then
