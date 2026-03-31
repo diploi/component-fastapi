@@ -41,7 +41,19 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
+              set -e
+              uv python install {{ ((.Values.envMap.PYTHON_VERSION).value | default "3.12") | quote }}
               uv venv .venv --clear
+              if [ -f pyproject.toml ]; then
+                uv sync
+              elif [ -f requirements.txt ]; then
+                uv pip install -r requirements.txt
+              fi
+          env:
+            - name: UV_PYTHON
+              value: {{ ((.Values.envMap.PYTHON_VERSION).value | default "3.12") | quote }}
+            - name: UV_PYTHON_INSTALL_DIR
+              value: /app{{ .Values.folder }}/.python
           workingDir: /app{{ .Values.folder }}
           volumeMounts:
             - name: app-mount
@@ -71,6 +83,10 @@ spec:
           {{- end }}
           {{- end }}
           env:
+            - name: UV_PYTHON
+              value: {{ ((.Values.envMap.PYTHON_VERSION).value | default "3.12") | quote }}
+            - name: UV_PYTHON_INSTALL_DIR
+              value: /app{{ .Values.folder }}/.python
             {{- range .Values.env }}
             - name: {{ .identifier }}
               value: {{ .value | quote }}
