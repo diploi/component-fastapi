@@ -23,17 +23,17 @@ Link to the full guide https://diploi.com/blog/hosting_fastapi_apps
 The development server is started with:
 
 ```sh
-uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-dir .venv/lib
+uv run --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-dir .venv/lib
 ```
 
 This can be changed with the `containerCommands.developmentStart` field in `diploi.yaml`.
 
 ### Production
 
-Builds a production-ready image. During the build, dependencies are installed with `uv pip install`. When the container starts, it runs:
+Builds a production-ready image. During the build, dependencies are installed with `uv sync` or `uv pip install`. When the container starts, it runs:
 
 ```sh
-uvicorn src.main:app --host 0.0.0.0 --port 8000 --proxy-headers
+uv run --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --proxy-headers
 ```
 
 This can be changed with the `containerCommands.productionStart` field in `diploi.yaml`.
