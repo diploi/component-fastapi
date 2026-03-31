@@ -18,6 +18,15 @@
 
 Link to the full guide https://diploi.com/blog/hosting_fastapi_apps
 
+### Python version
+
+The default Python version is **3.12**. You can change it in two ways:
+
+- **`PYTHON_VERSION` environment variable** - set this in `diploi.yaml` as a [static ENV](https://docs.diploi.com/reference/diploi-yaml/#static-values) under your component's environment variables. This controls the version used by both the development and production environments.
+- **`.python-version` file** - add a `.python-version` file to your component's folder containing just the version number (e.g. `3.11`). This is the standard convention used by `uv` and other Python tools, and is a good choice if you want the version pinned in your repository.
+
+If both are set, the `.python-version` file takes precedence.
+
 ### Development
 
 The development server is started with:
