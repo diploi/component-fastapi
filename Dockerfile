@@ -1,30 +1,7 @@
-FROM ghcr.io/astral-sh/uv:bookworm-slim
+# syntax=docker/dockerfile:1
+# The base has uv, diploi-pm and the entrypoint that runs the project's initScript (diploi/component-bases). The code is
+# not in the image: staging and production install the deployment's commit on its own machine, development runs the
+# working copy. The chart sets the start commands
+FROM public.ecr.aws/p8t2q7f4/diploi/component-bases/python:v1
 
-# This will be set by the GitHub action to the folder containing this component.
-ARG FOLDER=/app
-
-# This will be set by the GitHub action if "PYTHON_VERSION" ENV is set in diploi.yaml
-ARG PYTHON_VERSION=3.12
-
-RUN mkdir -p /.cache/uv && chown -R 1000:1000 /.cache
-RUN mkdir -p /.local/share/uv/python && chown -R 1000:1000 /.local/share/uv
-
-COPY --chown=1000:1000 . /app
-WORKDIR ${FOLDER}
-
-ENV UV_COMPILE_BYTECODE=1
-ENV UV_LINK_MODE=copy
-ENV PATH="$FOLDER/.venv/bin:$PATH"
-ENV UV_PYTHON=${PYTHON_VERSION}
-
-USER 1000:1000
-
-RUN uv python install ${PYTHON_VERSION} && \
-    uv venv .venv && \
-    if [ -f pyproject.toml ]; then \
-      uv sync --locked --no-dev || uv sync --no-dev; \
-    elif [ -f requirements.txt ]; then \
-      uv pip install -r requirements.txt; \
-    fi
-
-CMD ["uv", "run", "--with", "uvicorn", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]
+EXPOSE 8000

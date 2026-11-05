@@ -13,3 +13,9 @@ hosts:
 images:
   - identifier: app
     prebuildImage: public.ecr.aws/p8t2q7f4/diploi/component-fastapi:[tag]
+
+# Staging and production install the deployment's commit on its own machine, in the image above. Development runs the
+# working copy instead
+build:
+  command: UV_COMPILE_BYTECODE=1 diploi-pm install --no-dev
+  waitForImports: false

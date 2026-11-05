@@ -22,30 +22,52 @@ Link to the full guide https://diploi.com/blog/hosting_fastapi_apps
 
 The default Python version is **3.12**. You can change it in two ways:
 
-- **`PYTHON_VERSION` environment variable** - set this in `diploi.yaml` as a [static ENV](https://docs.diploi.com/reference/diploi-yaml/#static-values) under your component's environment variables. This controls the version used by both the development and production environments.
-- **`.python-version` file** - add a `.python-version` file to your component's folder containing just the version number (e.g. `3.11`). This is the standard convention used by `uv` and other Python tools, and is a good choice if you want the version pinned in your repository.
+- **`.python-version` file** - add a `.python-version` file to your component's folder containing just the version number (e.g. `3.11`). This is the standard convention used by tools like `uv`.
+- **`PYTHON_VERSION` environment variable** - set this in `diploi.yaml` as a [static ENV](https://docs.diploi.com/reference/diploi-yaml/#static-values) under your component.
 
-If both are set, the `.python-version` file takes precedence.
+If both are set, the `.python-version` file takes precedence. `uv` downloads the version you ask for when it installs the dependencies.
 
 ### Development
 
-The development server is started with:
+Dependencies are installed with `uv sync`, or `uv pip install -r requirements.txt` in a project without a `pyproject.toml`. The development server is started with:
 
 ```sh
-uv run --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir src --reload-dir .venv/lib
+uv run uvicorn src.main:app --host 0.0.0.0 --port $PORT --reload --reload-dir src
 ```
 
-This can be changed with the `containerCommands.developmentStart` field in `diploi.yaml`.
+This can be changed with the `containerCommands.developmentStart` field in `diploi.yaml`. See [Ports](#ports).
 
 ### Production
 
-Builds a production-ready image. During the build, dependencies are installed with `uv sync` or `uv pip install`. When the container starts, it runs:
+Staging and production install the deployment's commit on the deployment itself, without the `dev` dependencies. A restart reuses that install, and a new commit or a changed environment variable installs again. If the install fails, the previous version keeps running and the deployment page shows the log.
+
+The app is then started with:
 
 ```sh
-uv run --with uvicorn uvicorn src.main:app --host 0.0.0.0 --port 8000 --proxy-headers
+uvicorn src.main:app --host 0.0.0.0 --port $PORT --proxy-headers
 ```
 
-This can be changed with the `containerCommands.productionStart` field in `diploi.yaml`.
+This can be changed with the `containerCommands.productionStart` field in `diploi.yaml`. `uvicorn` has to be in your dependencies, as it is in the `pyproject.toml` this component starts with.
+
+In staging and production the project folder is read-only while the app runs. Data the app keeps belongs in another component, such as a database, and `/tmp` is only for temporary files.
+
+#### System packages
+
+The image has no packages beyond `uv`. Install more with `initScript` in `diploi.yaml`, which runs as root when the component starts, or `preBuildScript`, which runs as root before the install, for example to compile a dependency:
+
+```yaml
+- name: FastAPI
+  identifier: fastapi
+  package: https://github.com/diploi/component-fastapi#v0.136.1
+  preBuildScript: |
+    apt-get update && apt-get install -y --no-install-recommends build-essential
+```
+
+#### Ports
+
+The component serves on port **8000** in every stage. To use another one, change the `port` of its `app` host in `diploi.yaml` (`hosts: [{ identifier: app, port: 8080 }]`). Diploi sets the `PORT` environment variable to it.
+
+A start command of your own should listen on `$PORT` too. Staging and production count a new version as ready once it accepts connections on that port, and one that listens elsewhere never becomes ready.
 
 ## Links
 
